@@ -50,21 +50,26 @@ class PWApp:
 
     def __init__(self, master):
 
-        # define frame containers
-        settings = LabelFrame(master, text="Settings", padx=5, pady=5)
-        settings.grid(row=0, column=0)
-
-        buttons = LabelFrame(master, text="Buttons", padx=5, pady=5)
-        buttons.grid(row=0, column=1)
-
-        output = LabelFrame(master, text = "Output", padx=5, pady=5)
-        output.grid(row=1, column=0, columnspan = 2)
-
         #define configuration
-
         self.cfg = Config().cfg
+        master.protocol("WM_DELETE_WINDOW", self.save_and_quit)
+        master.title("PassGen")
 
-        # declare variables
+        # define frame containers
+
+        self.settings = LabelFrame(master, text="Settings", padx=5, pady=5)
+        self.settings.grid(row=0, column=0)
+
+        self.buttons = LabelFrame(master, text="Buttons", padx=5, pady=5)
+        self.buttons.grid(row=0, column=1)
+
+        self.output = LabelFrame(master, text = "Output", padx=5, pady=5)
+        self.output.grid(row=1, column=0, columnspan = 2)
+
+        self.declare_vars()
+        self.create_elements()
+
+    def declare_vars(self):
         for sec in self.cfg.sections():
             for key in self.cfg[sec]:
                 exec("self.{0} = StringVar(); self.{0}.set(self.cfg.get('{1}', '{0}'))".format(key, sec))
@@ -73,50 +78,45 @@ class PWApp:
         self.cust_sym_dec.set(qd(self.cust_sym.get()))
         self.pwd = StringVar()
 
+    def create_elements(self):
         # implement form elements
-
-        self.lc = Checkbutton(settings, text="a-z", variable=self.use_lc)
+        self.lc = Checkbutton(self.settings, text="a-z", variable=self.use_lc)
         self.lc.grid(row=0, column=0)
 
-        self.uc = Checkbutton(settings, text="A-Z", variable=self.use_uc)
+        self.uc = Checkbutton(self.settings, text="A-Z", variable=self.use_uc)
         self.uc.grid(row=0, column=1)
 
-        self.num = Checkbutton(settings, text="0-9", variable=self.use_num)
+        self.num = Checkbutton(self.settings, text="0-9", variable=self.use_num)
         self.num.grid(row=0, column=2)
 
-        self.sym = Checkbutton(settings, text="!@#$", variable=self.use_sym)
+        self.sym = Checkbutton(self.settings, text="!@#$", variable=self.use_sym)
         self.sym.grid(row=0, column=3)
 
-        self.cs_opt_1 = Radiobutton(settings, text="Use custom symbols:", variable=self.use_cs, value=1)
+        self.cs_opt_1 = Radiobutton(self.settings, text="Use custom symbols:", variable=self.use_cs, value=1)
         self.cs_opt_1.grid(row=2, column=0, columnspan=2)
-        self.cs_opt_2 = Radiobutton(settings, text="Use default symbols", variable=self.use_cs, value=0)
+        self.cs_opt_2 = Radiobutton(self.settings, text="Use default symbols", variable=self.use_cs, value=0)
         self.cs_opt_2.grid(row=3, column=0, columnspan=2)
 
-        self.cs = Entry(settings, text="Custom Symbols:", textvariable=self.cust_sym_dec)
+        self.cs = Entry(self.settings, text="Custom Symbols:", textvariable=self.cust_sym_dec)
         self.cs.grid(row=2, column=2, columnspan=2)
 
-        self.len_label = Label(settings, text="Password Length:")
+        self.len_label = Label(self.settings, text="Password Length:")
         self.len_label.grid(row=1, column=0, columnspan=2)
 
-        self.len = Entry(settings, text="Password Length", textvariable=self.pass_len)
+        self.len = Entry(self.settings, text="Password Length", textvariable=self.pass_len)
         self.len.grid(row=1, column=2, columnspan=2)
 
-        self.pwd_label = Label(output, text = "Password:")
+        self.pwd_label = Label(self.output, text = "Password:")
         self.pwd_label.grid(row=0, column=0)
 
-        self.pwd_field = Entry(output, text="Password", textvariable=self.pwd, width=30)
+        self.pwd_field = Entry(self.output, text="Password", textvariable=self.pwd, width=30)
         self.pwd_field.grid(row=0, column=1)
 
-        self.quit_button = Button(
-            buttons, text="QUIT", fg="red", command=self.save_and_quit
-            )
-        self.quit_button.grid(row=0, column=0)
+        self.generate_button = Button(self.buttons, text="Generate Password", command=self.gen_pwd)
+        self.generate_button.grid(row=0, column=0)
 
-        self.generate_button = Button(
-            buttons, text="Generate Password", command=self.gen_pwd
-            )
-        self.generate_button.grid(row=0, column=1)
-
+        self.quit_button = Button(self.buttons, text="Save and Quit", fg="red", command=self.save_and_quit)
+        self.quit_button.grid(row=1, column=0)
 
     def gen_pwd(self):
         self.save_config()
@@ -148,6 +148,4 @@ class PWApp:
 
 root = Tk()
 app = PWApp(root)
-root.protocol("WM_DELETE_WINDOW", app.save_and_quit)
-
 root.mainloop()
