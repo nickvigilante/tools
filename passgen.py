@@ -16,7 +16,6 @@ class Config:
         if not os.path.isfile('./config.ini'):
             self.build_config()
         self.cfg = self.read_config_ini_from_file()
-        
     def build_config(self):
         settings = {
         'Character Sets':
@@ -53,10 +52,13 @@ class PWApp:
 
         # define frame containers
         settings = LabelFrame(master, text="Settings", padx=5, pady=5)
-        settings.pack(padx=10, pady=10)
+        settings.grid(row=0, column=0)
+
+        buttons = LabelFrame(master, text="Buttons", padx=5, pady=5)
+        buttons.grid(row=0, column=1)
 
         output = LabelFrame(master, text = "Output", padx=5, pady=5)
-        output.pack(padx=10, pady=10)
+        output.grid(row=1, column=0, columnspan = 2)
 
         #define configuration
 
@@ -74,40 +76,46 @@ class PWApp:
         # implement form elements
 
         self.lc = Checkbutton(settings, text="a-z", variable=self.use_lc)
-        self.lc.pack(side=LEFT)
+        self.lc.grid(row=0, column=0)
 
         self.uc = Checkbutton(settings, text="A-Z", variable=self.use_uc)
-        self.uc.pack(side=LEFT)
+        self.uc.grid(row=0, column=1)
 
         self.num = Checkbutton(settings, text="0-9", variable=self.use_num)
-        self.num.pack(side=LEFT)
+        self.num.grid(row=0, column=2)
 
         self.sym = Checkbutton(settings, text="!@#$", variable=self.use_sym)
-        self.sym.pack(side=LEFT)
+        self.sym.grid(row=0, column=3)
 
-        self.cs_opt_1 = Radiobutton(settings, text="Use default symbols", variable=self.use_cs, value=0)
-        self.cs_opt_1.pack(anchor=W)
-        self.cs_opt_2 = Radiobutton(settings, text="Use custom symbols", variable=self.use_cs, value=1)
-        self.cs_opt_2.pack(anchor=W)
+        self.cs_opt_1 = Radiobutton(settings, text="Use custom symbols:", variable=self.use_cs, value=1)
+        self.cs_opt_1.grid(row=2, column=0, columnspan=2)
+        self.cs_opt_2 = Radiobutton(settings, text="Use default symbols", variable=self.use_cs, value=0)
+        self.cs_opt_2.grid(row=3, column=0, columnspan=2)
 
         self.cs = Entry(settings, text="Custom Symbols:", textvariable=self.cust_sym_dec)
-        self.cs.pack()
+        self.cs.grid(row=2, column=2, columnspan=2)
 
-        self.len = Entry(settings, text="Password Length:", textvariable=self.pass_len)
-        self.len.pack()
+        self.len_label = Label(settings, text="Password Length:")
+        self.len_label.grid(row=1, column=0, columnspan=2)
 
-        self.pwd_field = Entry(output, text="Password:", textvariable=self.pwd, width=100)
-        self.pwd_field.pack()
+        self.len = Entry(settings, text="Password Length", textvariable=self.pass_len)
+        self.len.grid(row=1, column=2, columnspan=2)
+
+        self.pwd_label = Label(output, text = "Password:")
+        self.pwd_label.grid(row=0, column=0)
+
+        self.pwd_field = Entry(output, text="Password", textvariable=self.pwd, width=30)
+        self.pwd_field.grid(row=0, column=1)
 
         self.quit_button = Button(
-            settings, text="QUIT", fg="red", command=self.save_and_quit
+            buttons, text="QUIT", fg="red", command=self.save_and_quit
             )
-        self.quit_button.pack(side=LEFT)
+        self.quit_button.grid(row=0, column=0)
 
         self.generate_button = Button(
-            output, text="Generate Password", command=self.gen_pwd
+            buttons, text="Generate Password", command=self.gen_pwd
             )
-        self.generate_button.pack(side=LEFT)
+        self.generate_button.grid(row=0, column=1)
 
 
     def gen_pwd(self):
@@ -143,5 +151,3 @@ app = PWApp(root)
 root.protocol("WM_DELETE_WINDOW", app.save_and_quit)
 
 root.mainloop()
-
-# add use at least n of the following (uppercase, lowercase, numbers, symbols)
