@@ -16,6 +16,7 @@ class Config:
         if not os.path.isfile('./config.ini'):
             self.build_config()
         self.cfg = self.read_config_ini_from_file()
+        
     def build_config(self):
         settings = {
         'Character Sets':
@@ -143,19 +144,4 @@ root.protocol("WM_DELETE_WINDOW", app.save_and_quit)
 
 root.mainloop()
 
-
-#root.destroy()
-
-# https://docs.python.org/3.7/library/secrets.html#module-secrets
-
-# https://docs.python.org/3.7/library/string.html
-
 # add use at least n of the following (uppercase, lowercase, numbers, symbols)
-
-# make a gui
-
-# create a center justified monocode paragraph field that clicks on copy
-
-# create a brief popup below the field that says "Click to copy" before coying and "Copied" after but as the regenerate button is hit, it revers back to "Click to copy"
-
-# create a configuration file if none exists
