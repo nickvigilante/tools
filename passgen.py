@@ -68,6 +68,7 @@ class PWApp:
 
         self.declare_vars()
         self.create_elements()
+        self.create_cs_rb()
 
     def declare_vars(self):
         for sec in self.cfg.sections():
@@ -89,16 +90,13 @@ class PWApp:
         self.num = Checkbutton(self.settings, text="0-9", variable=self.use_num)
         self.num.grid(row=0, column=2)
 
-        self.sym = Checkbutton(self.settings, text="!@#$", variable=self.use_sym)
+        self.sym = Checkbutton(self.settings, text="!@#$", variable=self.use_sym, command=self.create_cs_rb)
         self.sym.grid(row=0, column=3)
 
         self.cs_opt_1 = Radiobutton(self.settings, text="Use custom symbols:", variable=self.use_cs, value=1)
         self.cs_opt_1.grid(row=2, column=0, columnspan=2)
         self.cs_opt_2 = Radiobutton(self.settings, text="Use default symbols", variable=self.use_cs, value=0)
         self.cs_opt_2.grid(row=3, column=0, columnspan=2)
-
-        self.cs = Entry(self.settings, text="Custom Symbols:", textvariable=self.cust_sym_dec)
-        self.cs.grid(row=2, column=2, columnspan=2)
 
         self.len_label = Label(self.settings, text="Password Length:")
         self.len_label.grid(row=1, column=0, columnspan=2)
@@ -117,6 +115,20 @@ class PWApp:
 
         self.quit_button = Button(self.buttons, text="Save and Quit", fg="red", command=self.save_and_quit)
         self.quit_button.grid(row=1, column=0)
+
+    def create_cs_rb(self):
+        disable_sym_rb = "DISABLED" if not getboolean(int(self.use_sym.get())) else "NORMAL"
+        exec("self.cs_opt_1 = Radiobutton(self.settings, text='Use custom symbols:', variable=self.use_cs, value=1, command=self.create_cs_field, state={0})".format(disable_sym_rb))
+        self.cs_opt_1.grid(row=2, column=0, columnspan=2)
+        exec("self.cs_opt_2 = Radiobutton(self.settings, text='Use default symbols', variable=self.use_cs, value=0, command=self.create_cs_field, state={0})".format(disable_sym_rb))
+        self.cs_opt_2.grid(row=3, column=0, columnspan=2)
+        self.create_cs_field()
+
+    def create_cs_field(self):
+        disable_cs_field = "NORMAL" if getboolean(int(self.use_sym.get())) and getboolean(int(self.use_cs.get())) else "DISABLED"
+        exec('self.cs = Entry(self.settings, text="Custom Symbols:", textvariable=self.cust_sym_dec, state={0})'.format(disable_cs_field))
+        self.cs.grid(row=2, column=2, columnspan=2)
+
 
     def gen_pwd(self):
         self.save_config()
