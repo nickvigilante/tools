@@ -8,7 +8,6 @@ def qe(str):
 def qd(str):
     return base64.b64decode(eval(str)).decode('utf-8')
 
-
 class Config:
 
     def __init__(self):
@@ -149,14 +148,20 @@ class PWApp(Frame):
         getboolean(int(self.use_sym.get())) and not getboolean(int(self.use_cs.get())) and char_set.extend(set(str(qd(self.sym_set.get()))))
         getboolean(int(self.use_sym.get())) and getboolean(int(self.use_cs.get())) and char_set.extend(set(str(qd(self.cust_sym.get()))))
 
-        password = ''
-        for i in range(0, int(self.pass_len.get())):
-            password += secrets.choice(char_set)
+        if float(self.pass_len.get()) % 1 != 0 or float(self.pass_len.get()) < 0:
+            password = 'Password must be positive int'
+        else:
+            password = ''
+            for i in range(0, int(self.pass_len.get())):
+                password += secrets.choice(char_set)
 
         self.pwd.set(password)
+        self.clipboard_clear()  # clear clipboard contents
+        self.clipboard_append(password)  # append new value to clipbaord
 
     def save_config(self):
-        self.cust_sym.set(qe(self.cust_sym_dec.get()))
+        self.cust_sym.set(qe(''.join(list(set(self.cust_sym_dec.get())))))
+        self.cust_sym_dec.set(qd(self.cust_sym.get()))
         for key in self.cfg['User Preferences']:
             exec("self.cfg.set('User Preferences', '{0}', str(self.{0}.get()))".format(key))
         self.cfg.write(open('config.ini', 'w'))
