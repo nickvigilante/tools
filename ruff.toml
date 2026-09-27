@@ -1,0 +1,12 @@
+# Conservative rule selection: pycodestyle errors/warnings, pyflakes, and
+# import sorting. Deliberately excludes opinionated categories (S/bandit
+# security audits, UP/pyupgrade modernization, SIM/PIE simplification) so
+# rolling out pre-commit doesn't force unrelated rewrites of existing code.
+[lint]
+select = ["E", "F", "W", "I"]
+ignore = [
+  "F403", # passgen.py's `from tkinter import *` predates this config
+  "F405", # (star-import usage), not rewriting existing GUI code for it
+  "E501", # long lines already in the codebase; ruff-format doesn't
+  # auto-wrap f-strings, so this would mean hand-wrapping existing code
+]
